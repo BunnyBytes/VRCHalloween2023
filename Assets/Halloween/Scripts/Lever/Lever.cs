@@ -6,6 +6,9 @@ using VRC.Udon;
 
 public class Lever : UdonSharpBehaviour
 {
+    [SerializeField] GameStateManager GameStateManager;
+    [SerializeField] GameObject LeverRespawn;
+
     // The lever handle that the player will pick up and bring to this object to trigger the event
     [SerializeField] GameObject leverHandlePickup;
     // The lever handle which will be enabled to show the puzzle has been solved
@@ -23,6 +26,9 @@ public class Lever : UdonSharpBehaviour
                 leverHandleLocal.SetActive(true);
 
                 // Start animation
+                
+                // Change spawn point
+                GameStateManager.SpawnPoint = LeverRespawn.transform.position;
             }
         }
     }
