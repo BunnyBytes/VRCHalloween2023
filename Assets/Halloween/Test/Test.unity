@@ -1723,6 +1723,8 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2128564941}
   VRCWorld: {fileID: 1864868118}
+  playerIds:
+    _values: []
 --- !u!1 &2137292232
 GameObject:
   m_ObjectHideFlags: 0
@@ -1891,6 +1893,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2137292238}
+  GameStateManager: {fileID: 2128564942}
   agent: {fileID: 2137292237}
 --- !u!114 &2137292240
 MonoBehaviour:

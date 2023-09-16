@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UdonSharp;
 using UnityEngine;
+using VRC.SDK3.Data;
 using VRC.SDKBase;
 
 /// <summary>
@@ -10,7 +11,7 @@ using VRC.SDKBase;
 public class GameStateManager : UdonSharpBehaviour
 {
     [SerializeField] GameObject VRCWorld;
-    public List<int> playerIds = new List<int>();
+    [SerializeField] public DataList playerIds = new DataList();
 
     // When this variable is updated, set the VRC world object's position to it for all users
     [UdonSynced, FieldChangeCallback(nameof(SpawnPoint))]
@@ -33,7 +34,8 @@ public class GameStateManager : UdonSharpBehaviour
         if (Networking.IsOwner(gameObject))
         {
             Debug.Log($"Adding player {player.displayName} to players list");
-            playerIds.Add(player.playerId);
+            DataToken _player = player.playerId;
+            playerIds.Add(_player.Int);
         }
     }
 
@@ -42,7 +44,8 @@ public class GameStateManager : UdonSharpBehaviour
         if (Networking.IsOwner(gameObject))
         {
             Debug.Log($"Removing player {player.displayName} from players list");
-            playerIds.Remove(player.playerId);
+            DataToken _player = player.playerId;
+            playerIds.Remove(_player.Int);
         }
     }
 }

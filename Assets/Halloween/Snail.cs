@@ -2,6 +2,7 @@
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.AI;
+using VRC.SDK3.Data;
 using VRC.SDKBase;
 
 public class Snail : UdonSharpBehaviour
@@ -10,23 +11,36 @@ public class Snail : UdonSharpBehaviour
     [SerializeField] NavMeshAgent agent;
     VRCPlayerApi target;
 
-    private void Start()
+    private void Update()
     {
-        if (Networking.IsOwner(gameObject) && target == null)
+        if (Networking.IsOwner(gameObject))
         {
-            GetNewTarget();
+            if (target == null)
+            {
+                GetNewTarget();
+            }
+            else
+            {
+                agent.SetDestination(target.GetPosition());
+            }
         }
+
     }
 
     void GetNewTarget()
     {
-        //target = GameStateManager.playerIds[Random.Range(0, GameStateManager.playerIds.Count)];
-        int randomTargetId = GameStateManager.playerIds[Random.Range(0, GameStateManager.playerIds.Count - 1)];
-        target = VRCPlayerApi.GetPlayerById(randomTargetId);
-        if (target != null)
+        if (GameStateManager.playerIds.Count > 0)
         {
-            Debug.Log($"Setting snail target to player {target.displayName} with id of {randomTargetId}");
-            agent.SetDestination(target.GetPosition());
+            DataToken randomTargetId = GameStateManager.playerIds[Random.Range(0, GameStateManager.playerIds.Count - 1)];
+            if (randomTargetId.TokenType == TokenType.Int)
+            {
+                target = VRCPlayerApi.GetPlayerById(randomTargetId.Int);
+                if (target != null)
+                {
+                    Debug.Log($"Setting snail target to player {target.displayName} with id of {randomTargetId}");
+                    
+                }
+            }
         }
     }
 
