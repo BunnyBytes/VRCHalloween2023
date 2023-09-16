@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
 /// <summary>
 /// This is a class to manage the game state so late joiners can sync properly
@@ -9,10 +10,11 @@ using UnityEngine;
 public class GameStateManager : UdonSharpBehaviour
 {
     [SerializeField] GameObject VRCWorld;
+    public List<VRCPlayerApi> players = new List<VRCPlayerApi>();
 
+    // When this variable is updated, set the VRC world object's position to it for all users
     [UdonSynced, FieldChangeCallback(nameof(SpawnPoint))]
     private Vector3 _spawnPoint;
-    // TODO: Test with late joiners
     public Vector3 SpawnPoint
     {
         set
@@ -24,5 +26,23 @@ public class GameStateManager : UdonSharpBehaviour
             RequestSerialization();
         }
         get => _spawnPoint;
+    }
+
+    public override void OnPlayerJoined(VRCPlayerApi player)
+    {
+        if (Networking.IsOwner(gameObject))
+        {
+            Debug.Log($"Adding player {player.displayName} to players list");
+            players.Add(player);
+        }
+    }
+
+    public override void OnPlayerLeft(VRCPlayerApi player)
+    {
+        if (Networking.IsOwner(gameObject))
+        {
+            Debug.Log($"Removing player {player.displayName} from players list");
+            players.Remove(player);
+        }
     }
 }

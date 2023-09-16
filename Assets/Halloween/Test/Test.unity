@@ -1402,8 +1402,8 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
-  - {fileID: 3678148545738259938, guid: c8131adbbaeac8945a750c0c2f18ecb8, type: 3}
   - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 3678148545738259938, guid: c8131adbbaeac8945a750c0c2f18ecb8, type: 3}
   - {fileID: 2100000, guid: fd20e45036ef323459e8286e9c23c02c, type: 2}
   LightMapsNear: []
   LightMapsFar: []
@@ -1466,6 +1466,8 @@ MonoBehaviour:
     ID: 12
   - gameObject: {fileID: 2128564939}
     ID: 13
+  - gameObject: {fileID: 2137292232}
+    ID: 14
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
 --- !u!4 &1864868121
