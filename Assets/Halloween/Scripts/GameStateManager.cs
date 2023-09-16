@@ -10,8 +10,9 @@ using VRC.SDKBase;
 /// </summary>
 public class GameStateManager : UdonSharpBehaviour
 {
+    [SerializeField] int playerCapacity;
+
     [SerializeField] GameObject VRCWorld;
-    [SerializeField] public DataList playerIds = new DataList();
 
     // When this variable is updated, set the VRC world object's position to it for all users
     [UdonSynced, FieldChangeCallback(nameof(SpawnPoint))]
@@ -29,23 +30,10 @@ public class GameStateManager : UdonSharpBehaviour
         get => _spawnPoint;
     }
 
-    public override void OnPlayerJoined(VRCPlayerApi player)
+    public VRCPlayerApi[] GetAllPlayers()
     {
-        if (Networking.IsOwner(gameObject))
-        {
-            Debug.Log($"Adding player {player.displayName} to players list");
-            DataToken _player = player.playerId;
-            playerIds.Add(_player.Int);
-        }
-    }
-
-    public override void OnPlayerLeft(VRCPlayerApi player)
-    {
-        if (Networking.IsOwner(gameObject))
-        {
-            Debug.Log($"Removing player {player.displayName} from players list");
-            DataToken _player = player.playerId;
-            playerIds.Remove(_player.Int);
-        }
+        VRCPlayerApi[] players = new VRCPlayerApi[playerCapacity];
+        VRCPlayerApi.GetPlayers(players);
+        return players;
     }
 }

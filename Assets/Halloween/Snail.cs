@@ -17,38 +17,51 @@ public class Snail : UdonSharpBehaviour
         {
             if (target == null)
             {
+                Debug.Log("Snail target is null. Getting a new target");
                 GetNewTarget();
             }
             else
             {
+                Debug.Log($"Setting new target destination at {target.GetPosition()}");
                 agent.SetDestination(target.GetPosition());
             }
         }
-
     }
 
     void GetNewTarget()
     {
-        if (GameStateManager.playerIds.Count > 0)
+        // Target is randomly selected from all players currently in the room
+        VRCPlayerApi[] players = GameStateManager.GetAllPlayers();
+
+        // Count the number of non-null elements in the array for the purpose of defining the range of random numbers
+        int nonNullCount = -1;
+        for (int i = 0; i < players.Length; i++)
         {
-            DataToken randomTargetId = GameStateManager.playerIds[Random.Range(0, GameStateManager.playerIds.Count - 1)];
-            if (randomTargetId.TokenType == TokenType.Int)
+            Debug.Log($"Getting new target. On index {i}. Null player at this index: {players[i] == null}");
+            if (players[i] != null)
             {
-                target = VRCPlayerApi.GetPlayerById(randomTargetId.Int);
-                if (target != null)
-                {
-                    Debug.Log($"Setting snail target to player {target.displayName} with id of {randomTargetId}");
-                    
-                }
+                nonNullCount++;
+            }
+            else
+            {
+                break;
             }
         }
-    }
+        Debug.Log($"Non-null count is: {nonNullCount}");
 
-    public override void OnPlayerLeft(VRCPlayerApi player)
-    {
-        if (player == target)
+        // Check for non-null elements
+        if (nonNullCount != -1)
         {
-            GetNewTarget();
+            // Randomly select a player in the array of all players in room
+            VRCPlayerApi randomPlayer = players[Random.Range(0, nonNullCount)];
+
+            // Set the target to the randomly selected target
+            target = randomPlayer;
+        } 
+        else
+        {
+            Debug.Log("Could not find player to assign to a new target");
         }
+        
     }
 }

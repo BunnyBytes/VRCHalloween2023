@@ -1722,9 +1722,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2128564941}
+  playerCapacity: 16
   VRCWorld: {fileID: 1864868118}
-  playerIds:
-    _values: []
 --- !u!1 &2137292232
 GameObject:
   m_ObjectHideFlags: 0
