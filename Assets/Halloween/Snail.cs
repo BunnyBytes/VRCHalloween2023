@@ -20,9 +20,12 @@ public class Snail : UdonSharpBehaviour
 
     void GetNewTarget()
     {
-        target = GameStateManager.players[Random.Range(0, GameStateManager.players.Count)];
+        //target = GameStateManager.playerIds[Random.Range(0, GameStateManager.playerIds.Count)];
+        int randomTargetId = GameStateManager.playerIds[Random.Range(0, GameStateManager.playerIds.Count - 1)];
+        target = VRCPlayerApi.GetPlayerById(randomTargetId);
         if (target != null)
         {
+            Debug.Log($"Setting snail target to player {target.displayName} with id of {randomTargetId}");
             agent.SetDestination(target.GetPosition());
         }
     }

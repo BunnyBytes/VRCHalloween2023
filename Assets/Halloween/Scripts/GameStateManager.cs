@@ -10,7 +10,7 @@ using VRC.SDKBase;
 public class GameStateManager : UdonSharpBehaviour
 {
     [SerializeField] GameObject VRCWorld;
-    public List<VRCPlayerApi> players = new List<VRCPlayerApi>();
+    public List<int> playerIds = new List<int>();
 
     // When this variable is updated, set the VRC world object's position to it for all users
     [UdonSynced, FieldChangeCallback(nameof(SpawnPoint))]
@@ -33,7 +33,7 @@ public class GameStateManager : UdonSharpBehaviour
         if (Networking.IsOwner(gameObject))
         {
             Debug.Log($"Adding player {player.displayName} to players list");
-            players.Add(player);
+            playerIds.Add(player.playerId);
         }
     }
 
@@ -42,7 +42,7 @@ public class GameStateManager : UdonSharpBehaviour
         if (Networking.IsOwner(gameObject))
         {
             Debug.Log($"Removing player {player.displayName} from players list");
-            players.Remove(player);
+            playerIds.Remove(player.playerId);
         }
     }
 }
