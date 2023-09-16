@@ -22,46 +22,45 @@ public class Snail : UdonSharpBehaviour
             }
             else
             {
-                Debug.Log($"Setting new target destination at {target.GetPosition()}");
-                agent.SetDestination(target.GetPosition());
+                Debug.Log("Setting new agent location");
+                SetNewAgentLocation();
             }
         }
     }
 
     void GetNewTarget()
     {
-        // Target is randomly selected from all players currently in the room
-        VRCPlayerApi[] players = GameStateManager.GetAllPlayers();
+        DataList playerIds = GameStateManager.GetAllPlayers();
+        int randomRange = playerIds.Count - 1;
 
-        // Count the number of non-null elements in the array for the purpose of defining the range of random numbers
-        int nonNullCount = -1;
-        for (int i = 0; i < players.Length; i++)
+
+        // From the DataList of playerIds, choose one at random
+        DataToken newTargetToken = playerIds[Random.Range(0, randomRange)];
+
+        // Check if the types are appropriate
+        if (!newTargetToken.IsNull && newTargetToken.TokenType == TokenType.Int)
         {
-            Debug.Log($"Getting new target. On index {i}. Null player at this index: {players[i] == null}");
-            if (players[i] != null)
+            VRCPlayerApi newPlayerTarget = VRCPlayerApi.GetPlayerById(newTargetToken.Int);
+
+            if (newPlayerTarget != null)
             {
-                nonNullCount++;
-            }
-            else
-            {
-                break;
+                target = newPlayerTarget;
             }
         }
-        Debug.Log($"Non-null count is: {nonNullCount}");
+    }
 
-        // Check for non-null elements
-        if (nonNullCount != -1)
+    void SetNewAgentLocation()
+    {
+        Vector3 newTargetLocation = target.GetPosition() != null ? target.GetPosition() : Vector3.zero;
+
+        if (newTargetLocation != null && newTargetLocation != Vector3.zero)
         {
-            // Randomly select a player in the array of all players in room
-            VRCPlayerApi randomPlayer = players[Random.Range(0, nonNullCount)];
-
-            // Set the target to the randomly selected target
-            target = randomPlayer;
-        } 
+            Debug.Log($"Setting new target destination at {newTargetLocation}");
+            agent.SetDestination(newTargetLocation);
+        }
         else
         {
-            Debug.Log("Could not find player to assign to a new target");
+            Debug.Log("Unable to set agent position to new target position");
         }
-        
     }
 }

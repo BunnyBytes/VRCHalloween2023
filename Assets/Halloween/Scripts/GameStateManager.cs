@@ -30,10 +30,30 @@ public class GameStateManager : UdonSharpBehaviour
         get => _spawnPoint;
     }
 
-    public VRCPlayerApi[] GetAllPlayers()
+    /// <summary>
+    /// Returns a DataList of ints representing the player ids of all the players currently in the instance
+    /// </summary>
+    /// <returns></returns>
+    public DataList GetAllPlayers()
     {
         VRCPlayerApi[] players = new VRCPlayerApi[playerCapacity];
         VRCPlayerApi.GetPlayers(players);
-        return players;
+
+        // Convert the array to a DataList
+        DataList playerIds = new DataList();
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (players[i] != null)
+            {
+                playerIds.Add(players[i].playerId);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        // Return the DataList of integers
+        return playerIds;
     }
 }
