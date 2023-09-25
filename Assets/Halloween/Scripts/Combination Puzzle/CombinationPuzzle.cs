@@ -10,23 +10,22 @@ using UnityEngine.UI;
 public class CombinationPuzzle : UdonSharpBehaviour
 {
     int numberOfDigits = 4;
-    DataList combination;
-    [UdonSynced] string combinationJson;
+
+    [UdonSynced] string combinationSolution;
+    [UdonSynced] string currentCombination;
 
     [SerializeField] Text text;
+    [SerializeField] Text currentSolutionText;
 
-    // TODO: Remove combination lock debug message on publish
     void Start()
     {
         if (Networking.IsOwner(Networking.LocalPlayer, gameObject))
         {
             // Set the random combination
-            combination = SetCombination();
+            SetCombinations();
             
-            // Log combination and request serialisation
-            Debug.Log($"Combination lock set to {GetCombinationString()}");
             RequestSerialization();
-            text.text = GetCombinationString();
+            text.text = combinationSolution;
         }
     }
 
@@ -34,60 +33,46 @@ public class CombinationPuzzle : UdonSharpBehaviour
     /// Generates a random combination lock of n digits
     /// </summary>
     /// <returns>Datalist representing ints corresponding to each digit of the combination lock</returns>
-    DataList SetCombination()
+    void SetCombinations()
     {
-        DataList combination = new DataList();
-
-        // Generate random values for each digit as required
+        // Generate values for each digit as required
         for (int i = 0; i < numberOfDigits; i++)
         {
-            combination.Add(new DataToken(Random.Range(0, 10)));
+            combinationSolution += Random.Range(1, 10).ToString();
+            currentCombination += "0";
         }
-
-        return combination;
     }
 
-    public override void OnPreSerialization()
+    /// <summary>
+    /// Given n digit and a direction, increases or decreases the desplay digit
+    /// Called by the interactable object
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="direction"></param>
+    public void ChangeCombinationDigit(int index, bool increase)
     {
-        if (VRCJson.TrySerializeToJson(combination, JsonExportType.Minify, out DataToken result))
+        // Get the int at string index
+        int currentDigit = int.Parse(currentCombination[index].ToString());
+
+        // Increase or decrease digit
+        if (increase)
         {
-            combinationJson = result.String;
+            currentDigit = (currentDigit + 1) % 10;
         } 
         else
         {
-            Debug.LogError(result.ToString());
+            currentDigit = (currentDigit - 1 + 10) % 10;
         }
+
+        // Update string
+        char[] combinationArray = currentCombination.ToCharArray();
+        combinationArray[index] = currentDigit.ToString()[0];
+        currentCombination = new string(combinationArray);
     }
 
     public override void OnDeserialization()
     {
-        if (VRCJson.TryDeserializeFromJson(combinationJson, out DataToken result))
-        {
-            // The combination is returned as a DataList of Doubles
-            combination = result.DataList;
-        }
-        else
-        {
-            Debug.LogError(result.ToString());
-        }
-        text.text = GetCombinationString();
-    }
-
-    /// <summary>
-    /// Convert the data list to a string
-    /// </summary>
-    /// <returns>String combination</returns>
-    string GetCombinationString()
-    {
-        string combinationLockString = "";
-        for (int i = 0; i < combination.Count; i++)
-        {
-            if (combination.TryGetValue(i, out var value))
-            {
-                combinationLockString += value.ToString();
-            }
-        }
-
-        return combinationLockString;
+        text.text = combinationSolution;
+        currentSolutionText.text = currentCombination;
     }
 }
