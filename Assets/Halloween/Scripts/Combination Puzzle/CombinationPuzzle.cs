@@ -68,6 +68,11 @@ public class CombinationPuzzle : UdonSharpBehaviour
         char[] combinationArray = currentCombination.ToCharArray();
         combinationArray[index] = currentDigit.ToString()[0];
         currentCombination = new string(combinationArray);
+
+        // Sync new value
+        Networking.SetOwner(Networking.LocalPlayer, gameObject);
+        RequestSerialization();
+        currentSolutionText.text = currentCombination;
     }
 
     public override void OnDeserialization()
