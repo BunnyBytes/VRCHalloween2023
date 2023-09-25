@@ -24,8 +24,7 @@ public class GameStateManager : UdonSharpBehaviour
             // Update the synced spawn point
             Debug.Log($"Setting the spawn point to {value}");
             _spawnPoint = value;
-            VRCWorld.transform.position = _spawnPoint;
-            RequestSerialization();
+              RequestSerialization();
         }
         get => _spawnPoint;
     }
