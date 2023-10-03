@@ -14,6 +14,8 @@ public class GameStateManager : UdonSharpBehaviour
 
     [SerializeField] GameObject VRCWorld;
 
+    DataList activePlayers;
+
     // When this variable is updated, set the VRC world object's position to it for all users
     [UdonSynced, FieldChangeCallback(nameof(SpawnPoint))]
     private Vector3 _spawnPoint;
@@ -32,7 +34,7 @@ public class GameStateManager : UdonSharpBehaviour
     /// <summary>
     /// Returns a DataList of ints representing the player ids of all the players currently in the instance
     /// </summary>
-    /// <returns></returns>
+    /// <returns>DataList of players</returns>
     public DataList GetAllPlayers()
     {
         VRCPlayerApi[] players = new VRCPlayerApi[playerCapacity];
@@ -54,5 +56,31 @@ public class GameStateManager : UdonSharpBehaviour
 
         // Return the DataList of integers
         return playerIds;
+    }
+
+    public override void OnPlayerJoined(VRCPlayerApi player)
+    {
+        if (Networking.IsOwner(Networking.LocalPlayer, gameObject))
+        {
+            Debug.Log($"Adding player {player.displayName} to the list of active players");
+            activePlayers.Add(new DataToken(player));
+        }
+    }
+
+    public override void OnPlayerLeft(VRCPlayerApi player)
+    {
+        if (Networking.IsOwner(Networking.LocalPlayer, gameObject))
+        {
+            DataToken playerToken = new DataToken(player);
+            if (activePlayers.Contains(playerToken))
+            {
+                Debug.Log($"Removing player {player.displayName} to the list of active players");
+                activePlayers.Remove(playerToken);
+            }
+            else
+            {
+                Debug.LogError("Unable to find player when attempting to remove from active player list.");
+            }
+        }
     }
 }

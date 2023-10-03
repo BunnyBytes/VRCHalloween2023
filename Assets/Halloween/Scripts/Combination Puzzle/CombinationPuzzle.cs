@@ -1,11 +1,7 @@
-﻿
-using JetBrains.Annotations;
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
-using VRC.SDK3.Data;
-using VRC.SDKBase;
-using VRC.Udon;
 using UnityEngine.UI;
+using VRC.SDKBase;
 
 public class CombinationPuzzle : UdonSharpBehaviour
 {
@@ -23,7 +19,7 @@ public class CombinationPuzzle : UdonSharpBehaviour
         {
             // Set the random combination
             SetCombinations();
-            
+
             RequestSerialization();
             text.text = combinationSolution;
         }
@@ -48,7 +44,7 @@ public class CombinationPuzzle : UdonSharpBehaviour
     /// Called by the interactable object
     /// </summary>
     /// <param name="index"></param>
-    /// <param name="direction"></param>
+    /// <param name="increase"></param>
     public void ChangeCombinationDigit(int index, bool increase)
     {
         // Get the int at string index
@@ -58,7 +54,7 @@ public class CombinationPuzzle : UdonSharpBehaviour
         if (increase)
         {
             currentDigit = (currentDigit + 1) % 10;
-        } 
+        }
         else
         {
             currentDigit = (currentDigit - 1 + 10) % 10;
