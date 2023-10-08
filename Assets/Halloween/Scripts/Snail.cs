@@ -30,7 +30,7 @@ public class Snail : UdonSharpBehaviour
 
     void GetNewTarget()
     {
-        DataList playerIds = GameStateManager.GetAllPlayers();
+        DataList playerIds = GameStateManager.GetAllPlayerIds();
         int randomRange = playerIds.Count - 1;
 
 
